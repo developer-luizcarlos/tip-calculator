@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/rules-of-hooks */
@@ -15,13 +16,15 @@ export default function Home() {
 
   const inputPersonsRef = useRef<unknown | any>();
 
-  const [billValue, setBillValue] = useState<number>(0);
-
   const people = useRef<number>(0);
 
-  const [numberOfPeople, setNumberOfPeople] = useState<number>(0);
-
   const percentageTip = useRef<number>(0);
+
+  const [alertEmptyValue, setAlertEmptyValue] = useState<boolean>(false);
+
+  const [billValue, setBillValue] = useState<number>(0);
+
+  const [numberOfPeople, setNumberOfPeople] = useState<number>(0);
 
   const [tipAmount, setTipAmount] = useState(0);
 
@@ -47,13 +50,20 @@ export default function Home() {
   }
 
   function calculateTipEachPerson() {
-    if (billValue <= 0 || numberOfPeople <= 0) {
+    if (billValue <= 0 || people.current <= 0) {
       return;
     }
     const tip: number = billValue * (percentageTip.current > 0 ? percentageTip.current / 100 : 0);
-    const tipPerPerson: number = tip / numberOfPeople;
+    const tipPerPerson: number = tip / people.current;
     if (Number.isNaN(tipPerPerson)) setTipPerPerson(0);
     else setTipPerPerson(tipPerPerson);
+    if (people.current === 0 || Number.isNaN(people.current)) {
+      inputPersonsRef.current.classList.add("deniedInputState");
+      setAlertEmptyValue(true);
+    } else {
+      inputPersonsRef.current.classList.remove("deniedInputState");
+      setAlertEmptyValue(false);
+    }
   }
 
 
@@ -145,7 +155,12 @@ export default function Home() {
 
           </div>
           <div className="flex flex-col gap-3">
-            <label htmlFor="" className="capitalize font-bold text-veryDarkCyan tracking-wide">number of people</label>
+            <div className="w-full flex items-center justify-between">
+              <label htmlFor="" className="capitalize font-bold text-veryDarkCyan tracking-wide">number of people</label>
+              <p className="text-red-600 text-xs font-medium" style={{ display: alertEmptyValue ? "block" : "none" }}>
+                Can&apos;t be zero
+              </p>
+            </div>
             <div
               ref={inputPersonsRef}
               className="w-full h-11 flex items-center justify-center bg-veryLightGrayishCyan rounded-md">
@@ -158,10 +173,12 @@ export default function Home() {
                 />
               </span>
               <input
+                ref={inputPersonsRef}
                 type="number"
                 value={numberOfPeople}
                 onChange={(e) => {
-                  setNumberOfPeople(e.target.valueAsNumber);
+                  people.current = e.target.valueAsNumber;
+                  setNumberOfPeople(people.current)
                   calculateTipEachPerson()
                   console.log(numberOfPeople)
                 }}
