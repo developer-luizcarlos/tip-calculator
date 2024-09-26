@@ -10,4 +10,15 @@ html {
 
 body {
   background-color: hsl(185, 41%, 84%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.activeInputRef {
+  border: 2px solid hsl(172, 67%, 45%);
+}
+
+.deniedInputState {
+  border: 2px solid #f00;
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { spaceMono } from "../../_lib/fonts";
 
 export const metadata: Metadata = {
   title: "Frontend Mentor Challenge | Tip Calculator",
@@ -14,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`antialiased`}
+        className={`${spaceMono.className}`}
       >
         {children}
       </body>
