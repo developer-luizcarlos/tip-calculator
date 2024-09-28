@@ -30,18 +30,6 @@ export default function Home() {
 
   const [tipPerPerson, setTipPerPerson] = useState<number>(0);
 
-  useEffect(() => {
-    console.log("bil " + billValue)
-  }, [billValue])
-
-  useEffect(() => {
-    console.log("percentage " + percentageTip.current)
-  }, [percentageTip.current])
-
-  useEffect(() => {
-    console.log("number of people " + numberOfPeople)
-  }, [numberOfPeople])
-
   function calculateTip() {
     const generateTipAmount = percentageTip.current !== 0 ? billValue * (percentageTip.current / 100) : 0;
     if (Number.isNaN(generateTipAmount)) setTipAmount(0)
@@ -64,6 +52,15 @@ export default function Home() {
       inputPersonsRef.current.classList.remove("deniedInputState");
       setAlertEmptyValue(false);
     }
+  }
+
+  function resetValue() {
+    percentageTip.current = 0;
+    people.current = 0;
+    setBillValue(0);
+    setNumberOfPeople(0);
+    setTipAmount(0)
+    setTipPerPerson(0);
   }
 
 
@@ -195,18 +192,19 @@ export default function Home() {
                 <h3 className="text-white font-semibold capitalize text-sm">tip amount</h3>
                 <small className="text-grayishCyan text-xs font-semibold">/ person</small>
               </div>
-              <span className="text-strongCyan text-3xl font-black before:content-['$']">{tipAmount.toFixed(2)}</span>
+              <span className="text-strongCyan text-3xl font-black before:content-['$']">{tipPerPerson.toFixed(2)}</span>
             </div>
             <div className="flex items-center w-full justify-between">
               <div className="flex flex-col gap-1">
                 <h3 className="text-white font-semibold capitalize text-sm">total</h3>
                 <small className="text-grayishCyan text-xs font-semibold">/ person</small>
               </div>
-              <span className="text-strongCyan text-3xl font-black before:content-['$']">{tipPerPerson.toFixed(2)}</span>
+              <span className="text-strongCyan text-3xl font-black before:content-['$']">{tipAmount.toFixed(2)}</span>
             </div>
           </div>
           <button
             className="w-full h-9 flex items-center justify-center uppercase text-veryDarkCyan font-extrabold bg-strongCyan rounded-md cursor-pointer hover:text-veryDarkCyan hover:bg-lightGrayishCyan hover:duration-500 hover:ease-in-out"
+            onClick={() => resetValue()}
           >reset</button>
         </div>
       </div>
