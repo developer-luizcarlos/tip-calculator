@@ -12,40 +12,43 @@ import { useState, useRef, useEffect } from 'react';
 export default function Home() {
 
 
-  const inputBillRef = useRef<unknown | any>();
+  const inputBillRef = useRef<HTMLElement | any>(null);
 
-  const inputPersonsRef = useRef<unknown | any>();
+  const inputPersonsRef = useRef<HTMLElement | any>(null);
 
-  const people = useRef<number>(0);
+  const inputSetBill = useRef<HTMLElement | any>(null);
+
+  const inputSetPeople = useRef<HTMLElement | any>(null);
+
+  const inputPercentageRef = useRef<HTMLElement | any>(null)
+
+  const billValueRef = useRef<number>(0);
+
+  const numberOfPeople = useRef<number>(0);
 
   const percentageTip = useRef<number>(0);
 
   const [alertEmptyValue, setAlertEmptyValue] = useState<boolean>(false);
-
-  const [billValue, setBillValue] = useState<number>(0);
-
-  const [numberOfPeople, setNumberOfPeople] = useState<number>(0);
 
   const [tipAmount, setTipAmount] = useState(0);
 
   const [tipPerPerson, setTipPerPerson] = useState<number>(0);
 
   function calculateTip() {
-    const generateTipAmount = percentageTip.current !== 0 ? billValue * (percentageTip.current / 100) : 0;
+    const generateTipAmount = percentageTip.current !== 0 ? billValueRef.current * (percentageTip.current / 100) : 0;
     if (Number.isNaN(generateTipAmount)) setTipAmount(0)
     else setTipAmount(generateTipAmount);
-    console.log(generateTipAmount)
   }
 
   function calculateTipEachPerson() {
-    if (billValue <= 0 || people.current <= 0) {
+    if (billValueRef.current <= 0 || numberOfPeople.current <= 0) {
       return;
     }
-    const tip: number = billValue * (percentageTip.current > 0 ? percentageTip.current / 100 : 0);
-    const tipPerPerson: number = tip / people.current;
+    const tip: number = billValueRef.current * (percentageTip.current > 0 ? percentageTip.current / 100 : 0);
+    const tipPerPerson: number = tip / numberOfPeople.current;
     if (Number.isNaN(tipPerPerson)) setTipPerPerson(0);
     else setTipPerPerson(tipPerPerson);
-    if (people.current === 0 || Number.isNaN(people.current)) {
+    if (numberOfPeople.current === 0 || Number.isNaN(numberOfPeople.current)) {
       inputPersonsRef.current.classList.add("deniedInputState");
       setAlertEmptyValue(true);
     } else {
@@ -56,9 +59,10 @@ export default function Home() {
 
   function resetValue() {
     percentageTip.current = 0;
-    people.current = 0;
-    setBillValue(0);
-    setNumberOfPeople(0);
+    numberOfPeople.current = 0;
+    inputSetBill.current.value = '';
+    inputSetPeople.current.value = '';
+    inputPercentageRef.current.value = '';
     setTipAmount(0)
     setTipPerPerson(0);
   }
@@ -67,7 +71,7 @@ export default function Home() {
   return (
     <div className="flex flex-col gap-5">
       <h1 className="uppercase font-bold text-center text-2xl text-veryDarkCyan tracking-[10px]">spli<br />tter</h1>
-      <div className="bg-white w-80 p-6 rounded-md grid grid-cols-1 md:grid-cols-2 md:w-[650px] md:gap-7">
+      <div className="bg-white w-80 p-6 rounded-md grid grid-cols-1 md:grid-cols-2 md:w-[750px] md:gap-7">
         <div className="flex flex-col gap-5 w-full h-full">
           <div className="flex flex-col gap-3">
             <label htmlFor="" className="capitalize font-bold text-veryDarkCyan tracking-wide">bill</label>
@@ -82,9 +86,9 @@ export default function Home() {
               </span>
               <input
                 type="number"
-                value={billValue}
+                ref={inputSetBill}
                 onChange={(e) => {
-                  setBillValue(e.target.valueAsNumber);
+                  billValueRef.current = e.target.valueAsNumber;
                 }}
                 onFocus={() => inputBillRef.current.classList.add("activeInputRef")}
                 onBlur={() => inputBillRef.current.classList.remove("activeInputRef")}
@@ -98,7 +102,6 @@ export default function Home() {
                 className="w-full h-10 flex items-center justify-center bg-veryDarkCyan text-white text-2xl font-semibold rounded-md hover:bg-strongCyan hover:text-veryDarkCyan hover:duration-700 hover:ease-in-out"
                 onClick={() => {
                   percentageTip.current = 5;
-                  console.log(percentageTip.current);
                   calculateTip();
                   calculateTipEachPerson()
                 }}
@@ -107,7 +110,6 @@ export default function Home() {
                 className="w-full h-10 flex items-center justify-center bg-veryDarkCyan text-white text-2xl font-semibold rounded-md hover:bg-strongCyan hover:text-veryDarkCyan hover:duration-700 hover:ease-in-out"
                 onClick={() => {
                   percentageTip.current = 10;
-                  console.log(percentageTip.current);
                   calculateTip();
                   calculateTipEachPerson()
                 }}
@@ -116,7 +118,6 @@ export default function Home() {
                 className="w-full h-10 flex items-center justify-center bg-veryDarkCyan text-white text-2xl font-semibold rounded-md hover:bg-strongCyan hover:text-veryDarkCyan hover:duration-700 hover:ease-in-out"
                 onClick={() => {
                   percentageTip.current = 15;
-                  console.log(percentageTip.current);
                   calculateTip();
                   calculateTipEachPerson()
                 }}
@@ -125,7 +126,6 @@ export default function Home() {
                 className="w-full h-10 flex items-center justify-center bg-veryDarkCyan text-white text-2xl font-semibold rounded-md hover:bg-strongCyan hover:text-veryDarkCyan hover:duration-700 hover:ease-in-out"
                 onClick={() => {
                   percentageTip.current = 25;
-                  console.log(percentageTip.current);
                   calculateTip();
                   calculateTipEachPerson()
                 }}
@@ -134,15 +134,14 @@ export default function Home() {
                 className="w-full h-10 flex items-center justify-center bg-veryDarkCyan text-white text-2xl font-semibold rounded-md hover:bg-strongCyan hover:text-veryDarkCyan hover:duration-700 hover:ease-in-out"
                 onClick={() => {
                   percentageTip.current = 50;
-                  console.log(percentageTip.current);
                   calculateTip();
                   calculateTipEachPerson()
                 }}
               >50%</button>
               <input type="number"
+              ref={inputPercentageRef}
                 onChange={(e) => {
                   percentageTip.current = e.target.valueAsNumber;
-                  console.log(percentageTip.current);
                   calculateTip();
                   calculateTipEachPerson()
                 }}
@@ -170,14 +169,11 @@ export default function Home() {
                 />
               </span>
               <input
-                ref={inputPersonsRef}
+                ref={inputSetPeople}
                 type="number"
-                value={numberOfPeople}
                 onChange={(e) => {
-                  people.current = e.target.valueAsNumber;
-                  setNumberOfPeople(people.current)
+                  numberOfPeople.current = e.target.valueAsNumber;
                   calculateTipEachPerson()
-                  console.log(numberOfPeople)
                 }}
                 onFocus={() => inputPersonsRef.current.classList.add("activeInputRef")}
                 onBlur={() => inputPersonsRef.current.classList.remove("activeInputRef")}
